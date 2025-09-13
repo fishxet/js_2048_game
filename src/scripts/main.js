@@ -2,31 +2,76 @@
 
 const Game = require('../modules/Game.class');
 const game = new Game();
+
 const buttonStart = document.querySelector('.start');
 const gameScore = document.querySelector('.game-score');
 const messageStart = document.querySelector('.message-start');
 
-buttonStart.addEventListener('click', (e) => {
-  game.start();
+function handleScoreUpdate() {
+  gameScore.textContent = game.getScore();
+}
 
-  const fieldRows = document.querySelectorAll('.field-row');
+function updateCell(cell, value) {
+  [...cell.classList].forEach((cls) => {
+    if (cls.startsWith('field-cell--')) {
+      cell.classList.remove(cls);
+    }
+  });
+
+  if (value !== 0) {
+    cell.classList.add(`field-cell--${value}`);
+    cell.textContent = value;
+  } else {
+    cell.textContent = '';
+  }
+}
+
+function handleCellUpdate() {
   const gameField = game.getState();
+  const fieldRows = document.querySelectorAll('.field-row');
 
-  e.preventDefault();
-
-  messageStart.classList.add('hidden');
-
-  fieldRows.forEach((field, rowIndex) => {
-    const cells = Array.from(field.cells);
-
-    cells.forEach((cell, cellIndex) => {
-      if (gameField[rowIndex][cellIndex] !== 0) {
-        cell.classList.add(`field-cell--${gameField[rowIndex][cellIndex]}`);
-        cell.textContent = gameField[rowIndex][cellIndex];
-      }
+  fieldRows.forEach((row, rowIndex) => {
+    Array.from(row.cells).forEach((cell, colIndex) => {
+      updateCell(cell, gameField[rowIndex][colIndex]);
     });
   });
 
-  gameScore.textContent = game.getScore();
+  handleScoreUpdate();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (game.getStatus() === Game.gameStatus.playing) {
+    let moved = false;
+
+    switch (e.key) {
+      case 'ArrowUp':
+        game.moveUp();
+        moved = true;
+        break;
+      case 'ArrowDown':
+        game.moveDown();
+        moved = true;
+        break;
+      case 'ArrowLeft':
+        game.moveLeft();
+        moved = true;
+        break;
+      case 'ArrowRight':
+        game.moveRight();
+        moved = true;
+        break;
+    }
+
+    if (moved) {
+      handleCellUpdate();
+    }
+  }
 });
-// Write your code here
+
+buttonStart.addEventListener('click', (e) => {
+  e.preventDefault();
+  game.start();
+  game.status = Game.gameStatus.playing;
+  messageStart.classList.add('hidden');
+  handleCellUpdate();
+});
