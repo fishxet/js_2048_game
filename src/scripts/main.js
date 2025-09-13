@@ -27,9 +27,6 @@ buttonStart.addEventListener('click', (e) => {
     });
   });
 
-  gameScore.textContent = gameField.reduce(
-    (acc, currentvalue) => acc + +currentvalue,
-    0,
-  );
+  gameScore.textContent = game.getScore();
 });
 // Write your code here

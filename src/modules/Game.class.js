@@ -27,6 +27,14 @@ class Game {
   moveDown() {}
 
   getScore() {
+    this.playingField.map((row) => {
+      row.map((cell) => {
+        if (cell !== 0) {
+          this.score += cell;
+        }
+      });
+    });
+
     return this.score;
   }
 
@@ -41,6 +49,7 @@ class Game {
       Math.floor(Math.random() * this.playingField.length)
     ] = 2;
     this.fillRandomTile();
+    this.fillRandomTile();
   }
   restart() {}
 
@@ -50,10 +59,15 @@ class Game {
     for (let row = 0; row < this.playingField.length; row++) {
       for (let column = 0; column < this.playingField.length; column++) {
         if (this.playingField[row][column] === 0) {
-          emptyFields.push(this.playingField[row].column);
+          emptyFields.push([row, column]);
         }
       }
     }
+
+    const [emptyRow, emptyColumn] =
+      emptyFields[Math.floor(Math.random() * emptyFields.length)];
+
+    this.playingField[emptyRow][emptyColumn] = 2;
   }
 }
 
