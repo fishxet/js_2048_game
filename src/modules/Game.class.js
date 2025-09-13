@@ -1,28 +1,24 @@
 'use strict';
-
-/**
- * This class represents the game.
- * Now it has a basic structure, that is needed for testing.
- * Feel free to add more props and methods if needed.
- */
 class Game {
-  /**
-   * Creates a new game instance.
-   *
-   * @param {number[][]} initialState
-   * The initial state of the board.
-   * @default
-   * [[0, 0, 0, 0],
-   *  [0, 0, 0, 0],
-   *  [0, 0, 0, 0],
-   *  [0, 0, 0, 0]]
-   *
-   * If passed, the board will be initialized with the provided
-   * initial state.
-   */
-  constructor(initialState) {
-    // eslint-disable-next-line no-console
-    console.log(initialState);
+  static gameStatus = {
+    idle: 'idle',
+    playing: 'playing',
+    win: 'win',
+    lose: 'lose',
+  };
+
+  constructor(
+    initialState = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  ) {
+    this.initialState = initialState;
+    this.score = 0;
+    this.status = Game.gameStatus.idle;
+    this.playingField = Array.from(initialState);
   }
 
   moveLeft() {}
@@ -30,39 +26,35 @@ class Game {
   moveUp() {}
   moveDown() {}
 
-  /**
-   * @returns {number}
-   */
-  getScore() {}
+  getScore() {
+    return this.score;
+  }
 
-  /**
-   * @returns {number[][]}
-   */
-  getState() {}
+  getState() {
+    return this.playingField;
+  }
 
-  /**
-   * Returns the current game status.
-   *
-   * @returns {string} One of: 'idle', 'playing', 'win', 'lose'
-   *
-   * `idle` - the game has not started yet (the initial state);
-   * `playing` - the game is in progress;
-   * `win` - the game is won;
-   * `lose` - the game is lost
-   */
   getStatus() {}
 
-  /**
-   * Starts the game.
-   */
-  start() {}
-
-  /**
-   * Resets the game.
-   */
+  start() {
+    this.playingField[Math.floor(Math.random() * this.playingField.length)][
+      Math.floor(Math.random() * this.playingField.length)
+    ] = 2;
+    this.fillRandomTile();
+  }
   restart() {}
 
-  // Add your own methods here
+  fillRandomTile() {
+    const emptyFields = [];
+
+    for (let row = 0; row < this.playingField.length; row++) {
+      for (let column = 0; column < this.playingField.length; column++) {
+        if (this.playingField[row][column] === 0) {
+          emptyFields.push(this.playingField[row].column);
+        }
+      }
+    }
+  }
 }
 
 module.exports = Game;
