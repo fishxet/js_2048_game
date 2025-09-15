@@ -6,6 +6,8 @@ const game = new Game();
 const buttonStart = document.querySelector('.start');
 const gameScore = document.querySelector('.game-score');
 const messageStart = document.querySelector('.message-start');
+const messageLose = document.querySelector('.message-lose');
+const messageWin = document.querySelector('.message-win');
 
 function handleScoreUpdate() {
   gameScore.textContent = game.getScore();
@@ -64,14 +66,41 @@ document.addEventListener('keydown', (e) => {
 
     if (moved) {
       handleCellUpdate();
+      game.checkLose();
+      game.checkWin();
+      updateMessageText();
     }
   }
 });
 
+function updateMessageText() {
+  messageLose.classList.add('hidden');
+  messageWin.classList.add('hidden');
+  messageStart.classList.add('hidden');
+
+  if (game.getStatus() === Game.gameStatus.win) {
+    messageWin.classList.remove('hidden');
+  } else if (game.getStatus() === Game.gameStatus.lose) {
+    messageLose.classList.remove('hidden');
+  } else if (game.getStatus() === Game.gameStatus.idle) {
+    messageStart.classList.remove('hidden');
+  }
+}
+
 buttonStart.addEventListener('click', (e) => {
   e.preventDefault();
-  game.start();
-  game.status = Game.gameStatus.playing;
-  messageStart.classList.add('hidden');
+
+  if (game.getStatus() === Game.gameStatus.idle) {
+    game.start();
+    game.status = Game.gameStatus.playing;
+    messageStart.classList.add('hidden');
+    buttonStart.classList.replace('start', 'restart');
+    buttonStart.textContent = 'Restart';
+  } else {
+    buttonStart.classList.replace('restart', 'start');
+    buttonStart.textContent = 'Start';
+    game.restart();
+  }
+  updateMessageText();
   handleCellUpdate();
 });

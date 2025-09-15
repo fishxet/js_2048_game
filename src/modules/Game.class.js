@@ -132,8 +132,52 @@ class Game {
       const [emptyRow, emptyColumn] =
         emptyFields[Math.floor(Math.random() * emptyFields.length)];
 
-      this.playingField[emptyRow][emptyColumn] = 2;
+      this.playingField[emptyRow][emptyColumn] = Math.random() < 0.9 ? 2 : 4;
     }
+  }
+
+  checkLose() {
+    for (let row = 0; row < this.playingField.length; row++) {
+      for (let col = 0; col < this.playingField.length; col++) {
+        if (this.playingField[row][col] === 0) {
+          return false;
+        }
+      }
+    }
+
+    for (let row = 0; row < this.playingField.length; row++) {
+      for (let col = 0; col < this.playingField.length - 1; col++) {
+        if (this.playingField[row][col] === this.playingField[row][col + 1]) {
+          return false;
+        }
+      }
+    }
+
+    for (let col = 0; col < this.playingField.length; col++) {
+      for (let row = 0; row < this.playingField.length - 1; row++) {
+        if (this.playingField[row][col] === this.playingField[row + 1][col]) {
+          return false;
+        }
+      }
+    }
+
+    this.status = Game.gameStatus.lose;
+
+    return true;
+  }
+
+  checkWin() {
+    for (let row = 0; row < this.playingField.length; row++) {
+      for (let col = 0; col < this.playingField.length; col++) {
+        if (this.playingField[row][col] === 2048) {
+          this.status = Game.gameStatus.win;
+
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }
 
