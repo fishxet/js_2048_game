@@ -22,6 +22,27 @@ class Game {
     this.playingField = initialState.map((row) => [...row]);
   }
 
+  checkState(originState) {
+    for (let i = 0; i < this.playingField.length; i++) {
+      for (let j = 0; j < this.playingField.length; j++) {
+        if (originState[i][j] !== this.playingField[i][j]) {
+
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  isStateChanged(originState) {
+    if (this.checkState(originState) === true) {
+      this.fillRandomTile();
+      this.checkLose();
+      this.checkWin();
+    }
+  }
+
   slideAndCombine(cells) {
     cells = cells.filter((x) => x !== 0);
 
@@ -43,24 +64,31 @@ class Game {
   }
 
   moveLeft() {
+    const originState = this.playingField.map((row) => [...row]);
+
     for (let i = 0; i < this.playingField.length; i++) {
       const cells = [...this.playingField[i]];
 
       this.playingField[i] = this.slideAndCombine(cells);
     }
-    this.fillRandomTile();
+    this.isStateChanged(originState);
   }
 
   moveRight() {
+    const originState = this.playingField.map((row) => [...row]);
+
     for (let i = 0; i < this.playingField.length; i++) {
       const cells = [...this.playingField[i]].reverse();
 
       this.playingField[i] = this.slideAndCombine(cells).reverse();
     }
-    this.fillRandomTile();
+
+    this.isStateChanged(originState);
   }
 
   moveUp() {
+    const originState = this.playingField.map((row) => [...row]);
+
     for (let col = 0; col < this.playingField.length; col++) {
       let column = this.playingField.map((row) => row[col]);
 
@@ -70,10 +98,13 @@ class Game {
         this.playingField[row][col] = column[row];
       }
     }
-    this.fillRandomTile();
+
+    this.isStateChanged(originState);
   }
 
   moveDown() {
+    const originState = this.playingField.map((row) => [...row]);
+
     for (let col = 0; col < this.playingField.length; col++) {
       let column = this.playingField.map((row) => row[col]).reverse();
 
@@ -83,7 +114,8 @@ class Game {
         this.playingField[row][col] = column[row];
       }
     }
-    this.fillRandomTile();
+
+    this.isStateChanged(originState);
   }
 
   getScore() {
